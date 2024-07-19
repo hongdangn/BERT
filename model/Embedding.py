@@ -6,6 +6,9 @@ class EmbedLayer(nn.Module):
     def __init__(self, 
                  vocab_size, 
                  model_dim):
+        
+        super(EmbedLayer, self).__init__()
+
         self.vocab_size = vocab_size
         self.model_dim = model_dim
 
