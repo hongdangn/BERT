@@ -22,7 +22,7 @@ class BERT(nn.Module):
     def forward(self, 
                 input: torch.tensor, # (batch, seq_len)
                 segment_label: torch.tensor):
-        mask = (input > 0).unsqueeze(dim = 1).repeat(1, input.size(1), 1).unsqueeze(dim = 1)
+        mask = (input > 0).unsqueeze(dim = 1).unsqueeze(dim = 1)
         embeded_input = self.embed(input, segment_label)
 
         return self.encoder_layers(embeded_input, mask)
