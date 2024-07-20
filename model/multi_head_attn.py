@@ -8,7 +8,7 @@ class MultiHeadAttention(nn.Module):
     def __init__(self, 
                  num_heads, 
                  model_dim,
-                 dropout = None):
+                 dropout):
         super(MultiHeadAttention, self).__init__()
 
         assert model_dim % num_heads == 0
@@ -17,11 +17,10 @@ class MultiHeadAttention(nn.Module):
         self.model_dim = model_dim
         self.num_heads = num_heads
 
-        self.dropout = nn.Dropout(dropout) if dropout is not None else None
+        self.dropout = nn.Dropout(dropout)
 
-        self.key = nn.Linear(self.dim, self.dim)
-        self.query = nn.Linear(self.dim, self.dim)
-        self.val = nn.Linear(self.dim, self.dim)
+        self.linear_layers = nn.ModuleList([nn.Linear(self.model_dim, self.model_dim)
+                                                    for _ in range(3)])
         self.out_linear = nn.Linear(self.model_dim, self.model_dim)
 
     def split_to_heads(self, input):
@@ -34,10 +33,10 @@ class MultiHeadAttention(nn.Module):
         """
             input: (batch_size, seq_len, model_dim)
         """
-        new_input = self.split_to_heads(input)
-        key = self.key(new_input)
-        query = self.query(new_input)
-        val = self.val(new_input)
+        key, query, val = [
+            self.split_to_heads(linear(input))  
+                    for linear in self.linear_layers 
+        ]
 
         attn_scores = torch.matmul(key, query.transpose(-2, -1)) / math.sqrt(self.dim)
 
@@ -52,7 +51,7 @@ class MultiHeadAttention(nn.Module):
         batch_size, _, seq_length, _ = output.size()
         output = output.transpose(1, 2).contiguous().view(batch_size, seq_length, -1)
 
-        return self.out_linear(output)
+        return self.out_linear(output)  
 
 
         
