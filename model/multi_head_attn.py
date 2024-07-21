@@ -19,8 +19,10 @@ class MultiHeadAttention(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
-        self.linear_layers = nn.ModuleList([nn.Linear(self.model_dim, self.model_dim)
-                                                    for _ in range(3)])
+        self.linear_layers = nn.ModuleList([
+            nn.Linear(self.model_dim, self.model_dim)
+                            for _ in range(3)
+        ])
         self.out_linear = nn.Linear(self.model_dim, self.model_dim)
 
     def split_to_heads(self, input):
@@ -42,6 +44,7 @@ class MultiHeadAttention(nn.Module):
 
         if mask is not None:
             attn_scores = attn_scores.masked_fill(mask == 0, -1e9)
+
         attn_scores = F.softmax(attn_scores, dim = -1)
 
         if self.dropout is not None:
@@ -52,7 +55,6 @@ class MultiHeadAttention(nn.Module):
         output = output.transpose(1, 2).contiguous().view(batch_size, seq_length, -1)
 
         return self.out_linear(output)  
-
 
         
         

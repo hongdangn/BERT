@@ -8,8 +8,6 @@ class FeedForward(nn.Module):
                  dropout):
         super(FeedForward, self).__init__()
 
-        self.model_dim = model_dim
-        self.hidden_size = hidden_size
         self.in_linear = nn.Linear(model_dim, hidden_size)
         self.out_linear = nn.Linear(hidden_size, model_dim)
         self.dropout = nn.Dropout(dropout)

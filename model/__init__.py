@@ -1,1 +1,1 @@
-from .bert import (BERT, BERTLM)
+from .bert import BERTLM

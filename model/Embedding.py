@@ -48,3 +48,8 @@ class EmbedLayer(nn.Module):
         tokens_embed = self.token_embed(input_tensor)
 
         return segments_embed + pos_embed + tokens_embed
+
+if __name__ == "__main__":
+    x = torch.randint(0, 10, (5, 3))
+    segment_label = torch.randint(1, 3, (5, 3))
+    print(EmbedLayer(10, 5)(x, segment_label).size())
