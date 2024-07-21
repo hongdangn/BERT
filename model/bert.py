@@ -27,3 +27,36 @@ class BERT(nn.Module):
 
         return self.encoder_layers(embeded_input, mask)
     
+class BERTMaskLM(nn.Module):
+    def __init__(self, 
+                 model_dim,
+                 vocab_size):
+        super(BERTMaskLM, self).__init__()
+
+        self.linear = nn.Linear(model_dim, vocab_size)
+        self.softmax = nn.LogSoftmax(dim = -1)
+
+    def forward(self, output):
+        return self.softmax(self.linear(output))
+    
+class BERTNextSentencePrediction(nn.Module):
+    def __init__(self, model_dim):
+        self.linear = nn.Linear(model_dim, 2)
+        self.softmax = nn.LogSoftmax(dim = -1) 
+    
+    def forward(self, output):
+        return self.softmax(self.linear(output[:, 0]))
+    
+class BERTLM(nn.Module):
+    def __init__(self, 
+                 bert: BERT,
+                 model_dim,
+                 vocab_size):
+        
+        self.bert = bert
+        self.nsp = BERTNextSentencePrediction(model_dim)
+        self.mlm = BERTMaskLM(model_dim, vocab_size)
+
+    def forward(self, input, segment_label):
+        output = self.bert(input, segment_label)
+        return self.nsp(output), self.mlm(output)
