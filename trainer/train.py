@@ -6,12 +6,12 @@ import os
 import sys
 import yaml
 import tqdm
-from scheduler import LRScheduler
+from .scheduler import LRScheduler
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(BASE_DIR))
 
-from configs import BaseConfig
+# from configs import BaseConfig
 
 class BERTTrainer:
     def __init__(self, 

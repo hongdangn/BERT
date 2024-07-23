@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from multi_head_attn import MultiHeadAttention
-from feed_forward import FeedForward
-from embedding import EmbedLayer
+from .multi_head_attn import MultiHeadAttention
+from .feed_forward import FeedForward
+from .embedding import EmbedLayer
 
 class Encoder(nn.Module):
     def __init__(self,

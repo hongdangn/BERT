@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-from encoder import Encoder
-from embedding import EmbedLayer
+from .encoder import Encoder
+from .embedding import EmbedLayer
 import os
 import sys
 
