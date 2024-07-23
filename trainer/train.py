@@ -66,13 +66,13 @@ class BERTTrainer:
 
                 avg_loss += loss.item()
 
-                print(f"Iteration {id}/{epoch},
-                        Avg_loss {avg_loss / (id + 1)},
-                        Total_correct_nsp {total_correct_nsp / total_input_nsp},
+                print(f"Iteration {id}/{epoch}, \
+                        Avg_loss {avg_loss / (id + 1)}, \
+                        Total_correct_nsp {total_correct_nsp / total_input_nsp}, \
                         Loss: {loss}\n")
             
-            print(f"Epoch {epoch},
-                    Avg_loss {avg_loss / (id + 1)},
+            print(f"Epoch {epoch}, \
+                    Avg_loss {avg_loss / (id + 1)}, \
                     Total_correct_nsp {total_correct_nsp / total_input_nsp}\n")
     
     def save(self, output_path):
