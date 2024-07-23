@@ -11,7 +11,7 @@ from .scheduler import LRScheduler
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(BASE_DIR))
 
-# from configs import BaseConfig
+from configs import BaseConfig
 
 class BERTTrainer:
     def __init__(self, 
@@ -49,7 +49,7 @@ class BERTTrainer:
                 # nsp_output: (batch_size, 2)
                 mlm_output, nsp_output = self.model(data["seq_inp"], data["seq_label"])
 
-                mlm_pred = torch.argmax(mlm_output, dim = -1)
+                mlm_output = mlm_output.transpose(-2, -1).contiguous() 
                 mlm_loss = self.criterion(mlm_output, data["seq_inp"])
 
                 nsp_pred = torch.argmax(nsp_output, dim = -1)
