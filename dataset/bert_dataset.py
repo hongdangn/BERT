@@ -19,7 +19,7 @@ class BertDataset(Dataset):
     self.pairs2labels = []
     self.get_all_pairs()
 
-  def __len__(self, idx):
+  def __len__(self):
     return len(self.pairs2labels)
 
   def __getitem__(self, index):
@@ -28,13 +28,25 @@ class BertDataset(Dataset):
     pair_label = self.pairs2labels[index]
     lines, is_next_label = pair_label["pair"], pair_label["is_next"]
 
-    mask_lines, mask_labels = [], []
+    mask_lines, mask_labels = [None]*2, [None]*2
     mask_lines[0], mask_labels[0] = self.mask_sequence(lines[0])
     mask_lines[1], mask_labels[1] = self.mask_sequence(lines[1])
 
     merge_line = [cls_tok] + mask_lines[0] + [sep_tok] + mask_lines[1] + [sep_tok]
     merge_label = [pad_tok] + mask_labels[0] + [pad_tok] + mask_labels[1] + [pad_tok]
-    segment_label = [1 for _ in range(len(mask_lines[0]) + 2)] + [2 for _ in range(len(mask_lines[1]) + 1)]
+    seq_label = [1 for _ in range(len(mask_lines[0]) + 2)] + [2 for _ in range(len(mask_lines[1]) + 1)]
+    
+    merge_line = merge_line[:64] if len(merge_line) > 64 else \
+                                        merge_line + [pad_tok for _ in range(64 - len(merge_line))]
+    merge_label = merge_label[:64] if len(merge_label) > 64 else \
+                                        merge_label + [pad_tok for _ in range(64 - len(merge_label))]
+    seq_label = seq_label[:64] if len(seq_label) > 64 else \
+                                        seq_label + [pad_tok for _ in range(64 - len(seq_label))]
+    return {
+        "seq_inp": torch.tensor(merge_line),
+        "seq_label": torch.tensor(seq_label),
+        "seq_nsp": torch.tensor([is_next_label])
+    }
   
   def mask_sequence(self, sequence):
     # remove CLS and SEP token
@@ -65,18 +77,17 @@ class BertDataset(Dataset):
           indexes = sorted(indexes)
           self.pairs2labels.append({
               "pair": (self.lines[indexes[0]], self.lines[indexes[1]]),
-              "is_next": True
+              "is_next": 1
           })
         else:
           self.pairs2labels.append({
               "pair": (self.lines[indexes[0]], self.lines[indexes[1]]),
-              "is_next": False
+              "is_next": 0
           })    
         continue
       
       index = random.sample(range(len(self.lines) - 1), 1)
       self.pairs2labels.append({
         "pair": (self.lines[index[0]], self.lines[index[0] + 1]),
-        "is_next": True
+        "is_next": 1
       })
-        
