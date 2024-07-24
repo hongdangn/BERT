@@ -45,7 +45,8 @@ class BertDataset(Dataset):
     return {
         "seq_inp": torch.tensor(merge_line),
         "seq_label": torch.tensor(seq_label),
-        "seq_nsp": torch.tensor([is_next_label])
+        "seq_mask_label": torch.tensor(merge_label),
+        "seq_nsp": torch.tensor(is_next_label)
     }
   
   def mask_sequence(self, sequence):

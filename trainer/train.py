@@ -50,10 +50,10 @@ class BERTTrainer:
                 mlm_output, nsp_output = self.model(data["seq_inp"], data["seq_label"])
 
                 mlm_output = mlm_output.transpose(-2, -1).contiguous() 
-                mlm_loss = self.criterion(mlm_output, data["seq_inp"])
+                mlm_loss = self.criterion(mlm_output, data["seq_mask_label"])
 
                 nsp_pred = torch.argmax(nsp_output, dim = -1)
-                nsp_loss = self.criterion(nsp_pred, data["seq_nsp"])
+                nsp_loss = self.criterion(nsp_output, data["seq_nsp"])
 
                 loss = mlm_loss + nsp_loss
 
